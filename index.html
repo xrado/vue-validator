@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>vue-validator</title>
+	<style>
+		body { font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; margin: 20px; }
+		table.form td { margin:5px; padding: 5px; }
+		pre { font-size:11px; background: #eee; padding: 5px; }
+        h3 {margin:0;}
+        input { border: 1px solid gray; padding: 3px 6px; border-radius: 2px; }
+
+		.valid {  }
+		.invalid { color: red; border-color: red; }
+	</style>
+</head>
+<body id="app">
+	<h1>Vue-validator</h1>
+
+	<table class="form">
+		<tr>
+			<td>Name</td>
+			<td><input type="text" v-model="form.name" v-valid="required,minLength:3,numeric" value="5"/></td>
+		</tr>
+		<tr>
+			<td>Age</td>
+			<td><input type="text" v-model="form.age" v-valid="required,numeric"/></td>
+		</tr>
+		<tr v-style="color: validator.form.check.valid ? '' : 'red'">
+			<td>Check</td>
+			<td><input type="checkbox" v-model="form.check" v-valid="required"/></td>
+		</tr>
+		<tr>
+			<td>Pattern</td>
+			<td><input type="text" v-model="form.pattern" v-valid="required,pattern: /abc/"/></td>
+		</tr>
+		<tr>
+			<td>Email</td>
+			<td><input type="text" v-model="form.email" v-valid="required,email"/></td>
+		</tr>
+	</table>
+	<br/>
+
+	<div style="text-align: center;padding: 5px; color: white" v-style="background-color: isValid ? 'green' : 'red'">
+		<span v-if="isValid">VALID</span>
+		<span v-if="!isValid">INVALID</span>
+	</div>
+
+<br/>
+form data: <br/>
+<pre style="font-size:11px">
+{{form | JSON}}
+</pre>
+<br/>
+validator: <br/>
+<pre style="font-size:11px">
+{{validator | JSON}}
+</pre>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js" data-main="demo.js" type="text/javascript"></script>
+</body>
+</html>
