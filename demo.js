@@ -15,8 +15,8 @@ define(function(require){
 		data: {
 			validator: {},
 			form: {
-				name: '5',
-				age: 0,
+				name: '',
+				age: null,
 				check: false,
 				pattern: '',
 				email: ''

@@ -11,29 +11,30 @@
 
 		.valid {  }
 		.invalid { color: red; border-color: red; }
+		.invalidText { color: red; }
 	</style>
 </head>
 <body id="app">
 	<h1>Vue-validator</h1>
 
 	<table class="form">
-		<tr>
-			<td>Name</td>
-			<td><input type="text" v-model="form.name" v-valid="required,minLength:3,numeric" value="5"/></td>
+		<tr v-class="invalidText: !validator.form.name.valid">
+			<td>First name</td>
+			<td><input type="text" v-model="form.name" v-valid="required,alpha"/></td>
 		</tr>
-		<tr>
+		<tr v-class="invalidText: !validator.form.age.valid">
 			<td>Age</td>
-			<td><input type="text" v-model="form.age" v-valid="required,numeric"/></td>
+			<td><input type="text" v-model="form.age" v-valid="required,integer,min: 10" number/></td>
 		</tr>
-		<tr v-style="color: validator.form.check.valid ? '' : 'red'">
+		<tr v-class="invalidText: !validator.form.check.valid">
 			<td>Check</td>
 			<td><input type="checkbox" v-model="form.check" v-valid="required"/></td>
 		</tr>
-		<tr>
+		<tr v-class="invalidText: !validator.form.pattern.valid">
 			<td>Pattern</td>
-			<td><input type="text" v-model="form.pattern" v-valid="required,pattern: /abc/"/></td>
+			<td><input type="text" v-model="form.pattern" v-valid="required,minLength:4,pattern: /abc/"/></td>
 		</tr>
-		<tr>
+		<tr v-class="invalidText: !validator.form.email.valid">
 			<td>Email</td>
 			<td><input type="text" v-model="form.email" v-valid="required,email"/></td>
 		</tr>
