@@ -29,6 +29,18 @@ define(function(require){
 				return Object.keys(this.validator.form).every(function (key) {
 					return this.validator.form[key].valid;
 				}.bind(this));
+			},
+			isModified: function () {
+				this.validator;
+
+				return Object.keys(this.validator.form).some(function (key) {
+					return this.validator.form[key].modified;
+				}.bind(this));
+			}
+		},
+		methods: {
+			onSave: function () {
+				alert('form is '+(this.$valid() ? 'VALID' : 'INVALID'));
 			}
 		}
 	});

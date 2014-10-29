@@ -51,11 +51,57 @@ define(function (require, exports, module) {
 		}
 	};
 
+
+
+	var checkIf = function (prop,validatorData,group) {
+		var stack = [];
+
+		function iterate(obj) {
+			for (var property in obj) {
+				if (obj.hasOwnProperty(property)) {
+					if (typeof obj[property] == "object" && !obj[property]._validate) {
+						iterate(obj[property]);
+					} else {
+						if(!group || (obj[property]._validate.group && group == obj[property]._validate.group)) stack.push(obj[property])
+					}
+				}
+			}
+		}
+
+		iterate(validatorData,group);
+
+		if(prop == 'valid') {
+			return stack.every(function (d) {
+				return d.valid;
+			})
+		}
+
+		if(prop == 'modified') {
+			return stack.some(function (d) {
+				return d.modified;
+			})
+		}
+	};
+
+	// validate on blur/change
+
 	return {
 		priority: 801,
 		bind: function () {
 			var model = this.el.getAttribute(Vue.config.prefix+'model'),
-				vm = this.vm;
+				vm = this.vm,
+				startValue;
+
+			if(!vm.$valid){
+				vm.$valid = function (group) {
+					vm.$emit('validate');
+					return checkIf('valid',vm.validator,group);
+				}
+
+				vm.$modified = function (group) {
+					return checkIf('modified',vm.validator,group);
+				}
+			}
 
 			if(model) {
 				this._model = model;
@@ -63,49 +109,78 @@ define(function (require, exports, module) {
 				if(!vm.$get('validator.'+model)) {
 					vm.$set('validator.'+model, {_validate:{}});
 
-					vm.$watch(model, function (value) {
-						this.validate(model,value);
+					// if invalid check as you type
+					this._onChange = vm.$watch(model, function (value) {
+						vm.$set('validator.'+model+'.modified', value !== startValue);
+						if(vm.$get('validator.'+model+'.invalid')) this.validate(model,true);
+					}.bind(this));
+
+					// if valid or not modified check on blur
+					this._onBlur = function () {
+						var value = this.vm.$get(model);
+						this.validate(model,value !== startValue);
+					}.bind(this);
+					_.on(this.el,'blur', this._onBlur);
+
+					// validate all
+					this._onValidate = vm.$on('validate', function () {
+						this.validate(model,true);
 					}.bind(this));
 
 					Vue.nextTick(function () {
-						this.validate(model,this.vm.$get(model));
+						startValue = this.vm.$get(model);
+						this.validate(model);
 					}.bind(this));
 				}
+
 				vm.$set('validator.'+model+'._validate.'+(this.arg || this.expression), this.expression);
+
+				if(this.arg == 'group') return;
+
 				vm.$set('validator.'+model+'.'+(this.arg || this.expression), false);
 			}
 		},
-		validate: function (model,value) {
+		validate: function (model,modifying) {
+			//console.log('validating', model, value);
 			var vm = this.vm,
+				value = vm.$get(model);
 				validate = this.vm.$get('validator.'+model+'._validate'),
 				valid = true,
 				skip = this.el.classList.contains('skip-validation');
-			
+
 			if(!skip) {
 				Object.keys(validate).forEach(function (name) {
-
+					if(name == 'group') return;
 					if(!_.validators[name]) throw new Error('missing validator for '+name);
 
 					var arg = vm.$get('validator.'+model+'._validate.'+name);
-					var _valid = (name != 'required' && ((value == null) || (value.length == 0))) ? true : _.validators[name].call(this.el,value,arg);
+					var _valid = (name != 'required' && ((value == null) || (value.length == 0))) ? true : _.validators[name].call(this,value,arg);
 					vm.$set('validator.'+model+'.'+name,_valid);
+
 					if(valid && !_valid) valid = false;
 
 				}.bind(this));
 			}
 
 			vm.$set('validator.'+model+'.valid',valid);
+			vm.$set('validator.'+model+'.invalid',modifying && !valid);
 
-			if(valid) {
-				_.removeClass(this.el,'invalid');
-				_.addClass(this.el,'valid');
-			} else {
-				_.addClass(this.el,'invalid');
-				_.removeClass(this.el,'valid');
+			if(modifying) {
+				this.el.classList.remove('valid');
+				this.el.classList.remove('invalid');
+
+				if(valid) {
+					this.el.classList.add('valid');
+				} else {
+					this.el.classList.add('invalid');
+				}
 			}
+
 		},
 		unbind: function () {
 			if(this.vm.$get('validator.'+this._model)) this.vm.$delete('validator.'+this._model);
+			if(this._onBlur) _.off(this.el,'blur',this._onBlur);
+			if(this._onValidate) this._onValidate();
 		}
 	}
 });

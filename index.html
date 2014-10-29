@@ -18,25 +18,29 @@
 	<h1>Vue-validator</h1>
 
 	<table class="form">
-		<tr v-class="invalidText: !validator.form.name.valid">
+		<tr v-class="invalidText: validator.form.name.invalid">
 			<td>First name</td>
-			<td><input type="text" v-model="form.name" v-valid="required,alpha"/></td>
+			<td><input type="text" v-model="form.name" v-valid="required,alpha"/> <span v-if="validator.form.name.modified">*</span></td>
 		</tr>
-		<tr v-class="invalidText: !validator.form.age.valid">
+		<tr v-class="invalidText: validator.form.age.invalid">
 			<td>Age</td>
 			<td><input type="text" v-model="form.age" v-valid="required,integer,min: 10" number/></td>
 		</tr>
-		<tr v-class="invalidText: !validator.form.check.valid">
+		<tr v-class="invalidText: validator.form.check.invalid">
 			<td>Check</td>
 			<td><input type="checkbox" v-model="form.check" v-valid="required"/></td>
 		</tr>
-		<tr v-class="invalidText: !validator.form.pattern.valid">
+		<tr v-class="invalidText: validator.form.pattern.invalid">
 			<td>Pattern</td>
 			<td><input type="text" v-model="form.pattern" v-valid="required,minLength:4,pattern: /abc/"/></td>
 		</tr>
-		<tr v-class="invalidText: !validator.form.email.valid">
+		<tr v-class="invalidText: validator.form.email.invalid">
 			<td>Email</td>
 			<td><input type="text" v-model="form.email" v-valid="required,email"/></td>
+		</tr>
+		<tr >
+			<td></td>
+			<td><button v-on="click: onSave">Save</button> <span v-if="isModified">modified</span></td>
 		</tr>
 	</table>
 	<br/>
