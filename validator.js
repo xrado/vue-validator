@@ -3,6 +3,8 @@ define(function (require, exports, module) {
 	var Vue = require('vendor/vue-0.11.0-rc3.min'),
 		_ = Vue.util;
 	
+	// Validators
+
 	_.validators = {
 		required: function (value) {
 			if(typeof value == 'boolean') return value;
@@ -51,7 +53,7 @@ define(function (require, exports, module) {
 		}
 	};
 
-
+	// Helpers
 
 	var checkIf = function (prop,validatorData,group) {
 		var stack = [];
@@ -83,7 +85,7 @@ define(function (require, exports, module) {
 		}
 	};
 
-	// validate on blur/change
+	// Directive
 
 	return {
 		priority: 801,
@@ -135,13 +137,10 @@ define(function (require, exports, module) {
 
 				vm.$set('validator.'+model+'._validate.'+(this.arg || this.expression), this.expression);
 
-				if(this.arg == 'group') return;
-
-				vm.$set('validator.'+model+'.'+(this.arg || this.expression), false);
+				if(this.arg != 'group') vm.$set('validator.'+model+'.'+(this.arg || this.expression), false);
 			}
 		},
 		validate: function (model,modifying) {
-			//console.log('validating', model, value);
 			var vm = this.vm,
 				value = vm.$get(model);
 				validate = this.vm.$get('validator.'+model+'._validate'),

@@ -46,4 +46,5 @@ DEMO
 TODO
 ----
 
+* may still need some tweaking
 * tests
