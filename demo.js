@@ -3,15 +3,14 @@ define(function(require){
 	var Vue = require('vendor/vue-0.11.0-rc3.min'),
 		validator = require('validator');
 
+	Vue.use(validator);
+
 	Vue.filter('JSON', function (value) {
 		return JSON.stringify(value,null, "\t");
 	});
 
 	var App = new Vue({
 		el: '#app',
-		directives: {
-			valid: validator
-		},
 		data: {
 			validator: {},
 			form: {

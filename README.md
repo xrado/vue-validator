@@ -3,8 +3,19 @@ vue-validator
 
 form validator for vue 0.11
 
+__usage:__
 
-_v-valid options_
+    var Vue = require('vue')
+    var validator = require('vue-validator')
+    Vue.use(validator)
+
+in template
+
+    <input type="text" v-model="name" v-valid="required,minLength:3,alpha">
+
+means.. name is required, must be at least 3 character length and only alphabetic characters. If all this rules are satisfied input will get valid class otherwise invalid. Validator status is held in vm.validator. See demo.js for more examples of usage.
+
+__v-valid options:__
 
 * required
 * numeric
@@ -23,14 +34,14 @@ _v-valid options_
 * group: group name
 
 
-_validator data_
+__validator data:__
 
 * valid - input is valid
 * invalid - input is modified and invalid
 * modified - input is modified (current value != start value)
 
 
-_methods added to VM_
+__methods added to VM:__
 
 * $valid([group]) - return if true if form is valid (group is optional)
 * $modified([group]) - return if true if form is modified (group is optional)
