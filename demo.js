@@ -1,6 +1,6 @@
 define(function(require){
 
-	var Vue = require('vendor/vue-0.11.0-rc3.min'),
+	var Vue = require('vendor/vue-0.11.1'),
 		validator = require('validator');
 
 	Vue.use(validator);
@@ -18,7 +18,20 @@ define(function(require){
 				age: null,
 				check: false,
 				pattern: '',
-				email: ''
+				email: '',
+				addresses: [],
+				addresses2: [],
+				text: ''
+			}
+		},
+		components: {
+			test: {
+				template: '<input type="text" v-model="text" value="">',
+				compiled: function () {
+					this.$watch('text', function (value) {
+						this.$parent.form.text = value;
+					})
+				}
 			}
 		},
 		computed: {
@@ -38,6 +51,10 @@ define(function(require){
 			}
 		},
 		methods: {
+			addAddress: function (e) {
+				this.form.addresses2.push({v:e.target.value});
+				e.target.value = '';
+			},
 			onSave: function () {
 				alert('form is '+(this.$valid() ? 'VALID' : 'INVALID'));
 			}

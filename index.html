@@ -9,8 +9,9 @@
         h3 {margin:0;}
         input { border: 1px solid gray; padding: 3px 6px; border-radius: 2px; }
 
-		.valid {  }
-		.invalid { color: red; border-color: red; }
+		.touched.valid {  }
+		.touched.invalid { color: red; border-color: red; }
+		.touched.invalid input { color: red; border-color: red; }
 		.invalidText { color: red; }
 	</style>
 </head>
@@ -37,6 +38,31 @@
 		<tr v-class="invalidText: validator.form.email.invalid">
 			<td>Email</td>
 			<td><input type="text" v-model="form.email" v-valid="required,email"/></td>
+		</tr>
+		<tr>
+			<td>Address</td>
+			<td>
+				<input type="text" v-model="form.addresses[0].name" v-valid="alpha"/> <br/>
+				<input type="text" v-model="form.addresses[1].name" v-valid="alpha"/>
+			</td>
+		</tr>
+		<tr>
+			<td>Address 2</td>
+			<td>
+				<ul>
+				<li v-repeat="form.addresses2">
+					<input type="text" v-model="form.addresses2[$index].v" v-valid="alpha"/> <br/>
+					<button v-on="click: form.addresses2.$remove($index)">remove</button>
+				</li>
+				</ul>
+				<input type="text" placeholder="add address" v-on="keyup: addAddress | key enter"/>
+			</td>
+		</tr>
+		<tr>
+			<td>Text component</td>
+			<td>
+				<div v-component="test" v-with="text:form.text" v-valid="required" model="text"></div>
+			</td>
 		</tr>
 		<tr >
 			<td></td>

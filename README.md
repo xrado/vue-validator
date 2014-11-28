@@ -39,6 +39,7 @@ __validator data:__
 * valid - input is valid
 * invalid - input is modified and invalid
 * modified - input is modified (current value != start value)
+* touched - input had focus (also set to true on $valid)
 
 
 __methods added to VM:__
