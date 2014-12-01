@@ -95,6 +95,8 @@
 				if(!model) { // for components
 					model = this.el.getAttribute('model');
 					this.el.removeAttribute('model');
+				} else {
+					model = model.split('|')[0].trim(); // remove filters
 				}
 
 				if(!vm.$valid){

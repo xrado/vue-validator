@@ -15,6 +15,12 @@ in template
 
 means.. name is required, must be at least 3 character length and only alphabetic characters. If all this rules are satisfied input will get valid class otherwise invalid. Validator status is held in vm.validator. See demo.js for more examples of usage.
 
+
+For custom elements you can specify model name in additional attribute model.
+
+    <xcomponent model="name" v-valid="required"></xcomponent>
+
+
 __v-valid options:__
 
 * required
@@ -33,11 +39,12 @@ __v-valid options:__
 * pattern: regex
 * group: group name
 
+You can add additional filters to Vue.util.validators
 
 __validator data:__
 
 * valid - input is valid
-* invalid - input is modified and invalid
+* invalid - input was touched and invalid
 * modified - input is modified (current value != start value)
 * touched - input had focus (also set to true on $valid)
 
