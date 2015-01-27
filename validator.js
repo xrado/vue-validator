@@ -120,31 +120,25 @@
 					model = model.replace(/\$key/,this.vm.$key);
 
 					if(!vm.$get('validator.'+model)) {
-						vm.$set('validator.'+model, {_validate:{}});
-
-						// if invalid check as you type
-						this._onChange = vm.$watch(model, function (value) {
-							vm.$set('validator.'+model+'.modified', value !== startValue);
-							if(vm.$get('validator.'+model+'.invalid')) this.validate(model,true);
-						}.bind(this),true);
-
-						// if valid or not modified check on blur
-						this._onBlur = function () {
-							var value = this.vm.$get(model);
-							this.el.classList.add('touched');
-							this.validate(model,value !== startValue,true);
-						}.bind(this);
-						_.on(this.el,'blur', this._onBlur);
-
-						// validate all
+						vm.$set('validator.'+model, {
+							_validate:{},
+							valid: true,
+							modified: false,
+							invalid: false
+						});
+						
 						this._onValidate = vm.$on('validate', function () {
-							this.el.classList.add('touched');
-							this.validate(model,true);
+							this.validate(model);
 						}.bind(this));
 
 						Vue.nextTick(function () {
 							startValue = this.vm.$get(model);
-							this.validate(model);
+
+							this._onChange = vm.$watch(model, function (value) {
+								vm.$set('validator.'+model+'.modified', value !== startValue);
+								this.validate(model);
+							}.bind(this),true);
+
 						}.bind(this));
 					}
 
@@ -153,13 +147,12 @@
 					if(this.arg != 'group') vm.$set('validator.'+model+'.'+(this.arg || this.expression), false);
 				}
 			},
-			validate: function (model,modifying,blur) {
+			validate: function (model) {
 				var vm = this.vm,
 					value = vm.$get(model),
 					validate = this.vm.$get('validator.'+model+'._validate'),
 					valid = true,
-					skip = this.el.classList.contains('skip-validation'),
-					touched = vm.$get('validator.'+model+'.touched');
+					skip = this.el.classList.contains('skip-validation');
 
 				if(!skip) {
 					Object.keys(validate).forEach(function (name) {
@@ -171,13 +164,11 @@
 						vm.$set('validator.'+model+'.'+name,_valid);
 
 						if(valid && !_valid) valid = false;
-
 					}.bind(this));
-					if((blur || modifying) && !vm.$get('validator.'+model+'.touched')) vm.$set('validator.'+model+'.touched', touched = true);
 				}
 
 				vm.$set('validator.'+model+'.valid',valid);
-				vm.$set('validator.'+model+'.invalid',touched && !valid);
+				vm.$set('validator.'+model+'.invalid',vm.$get('validator.'+model+'.modified') && !valid);
 
 				this.el.classList.remove('valid');
 				this.el.classList.remove('invalid');
@@ -191,7 +182,6 @@
 			},
 			unbind: function () {
 				if(this.vm.$get('validator.'+this._model)) this.vm.$delete('validator.'+this._model);
-				if(this._onBlur) _.off(this.el,'blur',this._onBlur);
 				if(this._onValidate && typeof this._onValidate == 'function') this._onValidate();
 			}
 		});

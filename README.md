@@ -44,9 +44,8 @@ You can add additional filters to Vue.util.validators
 __validator data:__
 
 * valid - input is valid
-* invalid - input was touched and invalid
 * modified - input is modified (current value != start value)
-* touched - input had focus (also set to true on $valid)
+* invalid - modified and invalid
 
 
 __methods added to VM:__

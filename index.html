@@ -9,9 +9,9 @@
         h3 {margin:0;}
         input { border: 1px solid gray; padding: 3px 6px; border-radius: 2px; }
 
-		.touched.valid {  }
-		.touched.invalid { color: red; border-color: red; }
-		.touched.invalid input { color: red; border-color: red; }
+		.valid {  }
+		.invalid { color: red; border-color: red; }
+		.invalid input { color: red; border-color: red; }
 		.invalidText { color: red; }
 	</style>
 </head>
@@ -19,23 +19,23 @@
 	<h1>Vue-validator</h1>
 
 	<table class="form">
-		<tr v-class="invalidText: validator.form.name.invalid">
+		<tr v-class="invalidText: !validator.form.name.valid">
 			<td>First name</td>
-			<td><input type="text" v-model="form.name" v-valid="required,alpha"/> <span v-if="validator.form.name.modified">*</span></td>
+			<td><input type="text" v-model="form.name" v-valid="required,alpha" value="Rado" lazy/> (lazy) <span v-if="validator.form.name.modified">modified</span></td>
 		</tr>
-		<tr v-class="invalidText: validator.form.age.invalid">
+		<tr v-class="invalidText: !validator.form.age.valid">
 			<td>Age</td>
 			<td><input type="text" v-model="form.age" v-valid="required,integer,min: 10" number/></td>
 		</tr>
-		<tr v-class="invalidText: validator.form.check.invalid">
+		<tr v-class="invalidText: !validator.form.check.valid">
 			<td>Check</td>
 			<td><input type="checkbox" v-model="form.check" v-valid="required"/></td>
 		</tr>
-		<tr v-class="invalidText: validator.form.pattern.invalid">
+		<tr v-class="invalidText: !validator.form.pattern.valid">
 			<td>Pattern</td>
 			<td><input type="text" v-model="form.pattern" v-valid="required,minLength:4,pattern: /abc/"/></td>
 		</tr>
-		<tr v-class="invalidText: validator.form.email.invalid">
+		<tr v-class="invalidText: !validator.form.email.valid">
 			<td>Email</td>
 			<td><input type="text" v-model="form.email" v-valid="required,email"/></td>
 		</tr>
@@ -71,9 +71,8 @@
 	</table>
 	<br/>
 
-	<div style="text-align: center;padding: 5px; color: white" v-style="background-color: isValid ? 'green' : 'red'">
-		<span v-if="isValid">VALID</span>
-		<span v-if="!isValid">INVALID</span>
+	<div v-if="!isValid" style="text-align: center;padding: 5px; color: white" v-style="background-color: isValid ? 'green' : 'red'">
+		<span>INVALID</span>
 	</div>
 
 <br/>
