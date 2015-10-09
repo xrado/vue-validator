@@ -127,7 +127,7 @@
 							touched: false,
 							invalid: false
 						});
-						
+					}
 						this._onValidate = vm.$on('validate', function () {
 							this.validate(model);
 						}.bind(this));
@@ -147,7 +147,7 @@
 							}.bind(this),true);
 
 						}.bind(this));
-					}
+
 
 					vm.$set('validator.'+model+'._validate.'+(this.arg || this.expression), this.expression);
 
